@@ -3,7 +3,7 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
+
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -51,12 +51,20 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        match self.root {
+            Some(ref mut node) => node.insert(value), // 插入到非空树中
+            None => self.root = Some(Box::new(TreeNode::new(value))), // 若根为空，则直接插入为根节点
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        match self.root {
+            Some(ref node) => node.search(value), // 搜索非空树
+            None => false, // 空树直接返回 false
+        }
+        //true
     }
 }
 
@@ -67,6 +75,40 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                // 值小于当前节点，插入到左子树
+                match self.left {
+                    Some(ref mut left_node) => left_node.insert(value), // 递归左子树
+                    None => self.left = Some(Box::new(TreeNode::new(value))), // 左子树为空时直接插入
+                }
+            }
+            Ordering::Greater => {
+                // 值大于当前节点，插入到右子树
+                match self.right {
+                    Some(ref mut right_node) => right_node.insert(value), // 递归右子树
+                    None => self.right = Some(Box::new(TreeNode::new(value))), // 右子树为空时直接插入
+                }
+            }
+            Ordering::Equal => {
+                // 对于相同的值，当前实现不插入重复元素
+            }
+        }
+    }
+
+     // 搜索节点
+     fn search(&self, value: T) -> bool {
+        match value.cmp(&self.value) {
+            Ordering::Less => match self.left {
+                Some(ref left_node) => left_node.search(value), // 递归左子树
+                None => false, // 没有找到
+            },
+            Ordering::Greater => match self.right {
+                Some(ref right_node) => right_node.search(value), // 递归右子树
+                None => false, // 没有找到
+            },
+            Ordering::Equal => true, // 找到了
+        }
     }
 }
 
